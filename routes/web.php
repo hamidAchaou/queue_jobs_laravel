@@ -9,7 +9,7 @@ Route::get('/', function () {
 });
 
 Route::get('/test', function () {
-    ProcessPodcast::dispatch()->delay(now()->addMinutes(1));
-    ProcessPodcast::dispatch(2);
+    ProcessPodcast::dispatch(1)->onqueue('hight');
+    ProcessPodcast::dispatch(2)->onqueue('low');
     return "test route";
 });
