@@ -9,6 +9,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
 
@@ -31,7 +32,7 @@ class RegisteredUserController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
@@ -45,6 +46,13 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
+        // Send welcome email
+        try {
+            Mail::to($user->email)->send(new \App\Mail\WelcomeEmail($user));
+        } catch (\Exception $e) {
+            dd('Mail sending failed: ' . $e->getMessage());
+        }
+        
         return redirect(route('dashboard', absolute: false));
     }
 }
