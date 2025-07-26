@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\SeendEmailWelcomeJob;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
@@ -47,11 +48,7 @@ class RegisteredUserController extends Controller
         Auth::login($user);
 
         // Send welcome email
-        try {
-            Mail::to($user->email)->send(new \App\Mail\WelcomeEmail($user));
-        } catch (\Exception $e) {
-            dd('Mail sending failed: ' . $e->getMessage());
-        }
+        SeendEmailWelcomeJob::dispatch($user);
         
         return redirect(route('dashboard', absolute: false));
     }
