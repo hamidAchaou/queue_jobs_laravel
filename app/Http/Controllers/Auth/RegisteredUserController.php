@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Jobs\SeendEmailWelcomeJob;
+use App\Jobs\SendWelcomeEmailJob;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
@@ -48,7 +49,7 @@ class RegisteredUserController extends Controller
         Auth::login($user);
 
         // Send welcome email
-        SeendEmailWelcomeJob::dispatch($user);
+        SendWelcomeEmailJob::dispatch($user);
         
         return redirect(route('dashboard', absolute: false));
     }
